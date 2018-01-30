@@ -1,0 +1,15 @@
+{% if attribute(result, '__toString') is defined %}
+  <p>{{ result|raw }}</p>
+{% else %}
+  {% if result.title is defined %}
+    <h3>{{ result.title }}</h3>
+  {% elseif result.name is defined %}
+    <h3>{{ result.name }}</h3>
+  {% endif %}
+
+  {% if result.body is defined %}
+    <p>{{ result.body|truncate(300, true)|raw }}</p>
+  {% elseif result.description is defined %}
+    <p>{{ result.description|truncate(300, true)|raw }}</p>
+  {% endif %}
+{% endif %}

@@ -1,0 +1,4 @@
+bkstg_search_search:
+    path: /
+    defaults:
+      _controller: Bkstg\SearchBundle\Controller\SearchController:searchAction
