@@ -1,8 +1,14 @@
 {% extends '@BkstgCore/layout.html.twig' %}
 {% set page_title = 'Search' %}
 {% block content %}
+  <ul class="search-results">
   {% for result in results %}
-    {{ bkstg_search_result(result) }}
+    <li class="search-result">
+      {{ bkstg_search_result(result) }}
+    </li>
+  {% else %}
+    <p><em>{{ 'Your search did not return any results.'|trans }}</em></p>
   {% endfor %}
+  </ul>
   {{ knp_pagination_render(results) }}
 {% endblock %}
