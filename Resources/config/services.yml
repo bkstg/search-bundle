@@ -29,7 +29,7 @@ services:
     # Event listener
     Bkstg\SearchBundle\EventListener\SearchBar:
         tags:
-            - { name: kernel.event_listener, event: sonata.block.event.bkstg.search_bar, method: onBlock }
+            - { name: kernel.event_listener, event: sonata.block.event.bkstg.search.search_bar, method: onBlock }
     Bkstg\SearchBundle\EventListener\SearchFields:
         tags:
             - { name: kernel.event_listener, event: bkstg_search.field_collection, method: addFields }
