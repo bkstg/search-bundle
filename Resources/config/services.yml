@@ -20,11 +20,9 @@ services:
         public: true
         arguments:
             - null
+            - '@sonata.templating'
         tags:
             - { name: sonata.block }
-
-    # Finder service alias for autowiring.
-    FOS\ElasticaBundle\Finder\FinderInterface: '@fos_elastica.finder.app'
 
     # Event listener
     Bkstg\SearchBundle\EventListener\SearchBar:

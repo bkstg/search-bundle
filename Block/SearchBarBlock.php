@@ -4,12 +4,12 @@ namespace Bkstg\SearchBundle\Block;
 
 use Sonata\BlockBundle\Block\BlockContextInterface;
 use Sonata\BlockBundle\Block\Service\AbstractBlockService;
+use Sonata\BlockBundle\Templating\TwigEngine;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Twig\Environment;
 
 class SearchBarBlock extends AbstractBlockService
 {
@@ -18,7 +18,7 @@ class SearchBarBlock extends AbstractBlockService
 
     public function __construct(
         $name,
-        Environment $templating,
+        TwigEngine $templating,
         FormFactoryInterface $form,
         UrlGeneratorInterface $url_generator
     ) {
