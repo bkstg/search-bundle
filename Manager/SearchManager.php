@@ -3,30 +3,23 @@
 namespace Bkstg\SearchBundle\Manager;
 
 use Bkstg\SearchBundle\Event\FieldCollectionEvent;
+use Bkstg\SearchBundle\Event\FilterCollectionEvent;
 use Bkstg\SearchBundle\Event\QueryAlterEvent;
-use Elastica\Query;
-use FOS\ElasticaBundle\Finder\FinderInterface;
+use Elastica\QueryBuilder;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Twig\Environment;
 
 class SearchManager implements SearchManagerInterface
 {
-    private $finder;
     private $dispatcher;
     private $token_storage;
-    private $twig;
 
     public function __construct(
-        FinderInterface $finder,
         EventDispatcherInterface $dispatcher,
-        TokenStorageInterface $token_storage,
-        Environment $twig
+        TokenStorageInterface $token_storage
     ) {
-        $this->finder = $finder;
         $this->dispatcher = $dispatcher;
         $this->token_storage = $token_storage;
-        $this->twig = $twig;
     }
 
     /**
@@ -50,7 +43,18 @@ class SearchManager implements SearchManagerInterface
         $fields_event = new FieldCollectionEvent();
         $this->dispatcher->dispatch(FieldCollectionEvent::NAME, $fields_event);
 
-        // Auto-filter to the groups for this user.
+        // Create the elastica query builder and default query.
+        $qb = new QueryBuilder();
+        $query = $qb->query()->bool()
+            ->addMust(
+                $qb
+                    ->query()
+                    ->query_string($query_string)
+                    ->setFields($fields_event->getFields())
+            )
+        ;
+
+        // Allow filters to use the current user's group ids.
         $user = $this->token_storage->getToken()->getUser();
         $memberships = $user->getMemberships();
         $group_ids = [];
@@ -60,21 +64,22 @@ class SearchManager implements SearchManagerInterface
             }
         }
 
-        // Build the default query from twig template.
-        $default_query = $this->twig->render('@BkstgSearch/Query/default_query.json.twig', [
-            'query_string' => $query_string,
-            'fields' => $fields_event->getFields(),
-            'group_ids' => $group_ids,
-        ]);
+        // Gather filters using an event.
+        $filter_event = new FilterCollectionEvent($qb, $group_ids);
+        $this->dispatcher->dispatch(FilterCollectionEvent::NAME, $filter_event);
 
-        // Decode the json so that the parameters are available.
-        $query = new Query(json_decode($default_query, true));
+        // Build the filter query.
+        $filter_query = $qb->query()->bool();
+        $query->addFilter($filter_query);
 
-        // Allow altering of the default query.
+        // Add filters from the filter event.
+        foreach($filter_event->getFilters() as $filter) {
+            $filter_query->addShould($filter);
+        }
+
+        // Allow altering of the finished query.
         $query_event = new QueryAlterEvent($query);
         $this->dispatcher->dispatch(QueryAlterEvent::NAME, $query_event);
-
-        // Return the query.
         return $query;
     }
 
