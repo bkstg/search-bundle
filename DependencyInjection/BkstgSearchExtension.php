@@ -22,6 +22,17 @@ class BkstgSearchExtension extends Extension
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
+        $default = $config['mapping']['default'];
+        unset($config['mapping']['default']);
+
+        // Get the metadata manager service.
+        $manager = $container->get('@Bkstg\\SearchBundle\\Metadata\\MetadataManager');
+        foreach ($config['mapping'] as $class => $mapping)
+        {
+            $metadata = ClassMetadata::createClassMetadata($class, $mapping);
+            $manager->setMetadata($class, $metadata);
+        }
+
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
     }

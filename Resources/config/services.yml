@@ -24,6 +24,10 @@ services:
         tags:
             - { name: sonata.block }
 
+    # Doctrine event listeners.
+    Bkstg\SearchBundle\EventListener\SearchIndexListener:
+        tags:
+            - { name: doctrine.event_listener, event: postPersist, lazy: true }
     # Event listener
     Bkstg\SearchBundle\EventListener\SearchBar:
         tags:
@@ -31,3 +35,6 @@ services:
     Bkstg\SearchBundle\EventListener\SearchFields:
         tags:
             - { name: kernel.event_listener, event: bkstg_search.field_collection, method: addFields }
+
+    # Autowiring.
+    Bkstg\SearchBundle\Metadata\MetadataManagerInterface: '@Bkstg\SearchBundle\Metadata\MetadataManager'

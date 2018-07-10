@@ -20,6 +20,30 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('bkstg_search');
 
+        $rootNode
+            ->children()
+                ->arrayNode('mapping')
+                    ->children()
+                        ->arrayNode('default')
+                            ->arrayPrototype()
+                                ->children()
+                                    ->floatNode('boost')->end()
+                                ->end()
+                            ->end()
+                        ->addDefaultsIfNotSet()
+                        ->end()
+                    ->end()
+                    ->arrayPrototype()
+                        ->arrayPrototype()
+                            ->children()
+                                ->floatNode('boost')->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end()
+        ;
+
         // Here you should define the parameters that are allowed to
         // configure your bundle. See the documentation linked above for
         // more information on that topic.

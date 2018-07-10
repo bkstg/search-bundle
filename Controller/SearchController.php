@@ -6,16 +6,18 @@ use Bkstg\CoreBundle\Controller\Controller;
 use Bkstg\SearchBundle\Manager\SearchManagerInterface;
 use FOS\ElasticaBundle\Finder\FinderInterface;
 use Knp\Component\Pager\PaginatorInterface;
+use Solarium\Client;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class SearchController extends Controller
 {
     public function searchAction(
-        SearchManagerInterface $search,
+        Client $search,
         PaginatorInterface $paginator,
         Request $request
     ) {
+        d($search->select($search->createSelect()));die;
         // Create a search query and paginate.
         $query = $search->buildQuery($request->query->get('search'));
         d($query);die;
