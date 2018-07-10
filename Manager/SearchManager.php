@@ -5,33 +5,28 @@ namespace Bkstg\SearchBundle\Manager;
 use Bkstg\SearchBundle\Event\FieldCollectionEvent;
 use Bkstg\SearchBundle\Event\QueryAlterEvent;
 use Elastica\Query;
-use Elastica\Search;
-use FOS\ElasticaBundle\Elastica\Client;
-use FOS\ElasticaBundle\Index\IndexManager;
+use FOS\ElasticaBundle\Finder\FinderInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Twig\Environment;
 
 class SearchManager implements SearchManagerInterface
 {
-    private $index_manager;
+    private $finder;
     private $dispatcher;
     private $token_storage;
     private $twig;
-    private $client;
 
     public function __construct(
-        IndexManager $index_manager,
+        FinderInterface $finder,
         EventDispatcherInterface $dispatcher,
         TokenStorageInterface $token_storage,
-        Environment $twig,
-        Client $client
+        Environment $twig
     ) {
-        $this->index_manager = $index_manager;
+        $this->finder = $finder;
         $this->dispatcher = $dispatcher;
         $this->token_storage = $token_storage;
         $this->twig = $twig;
-        $this->client = $client;
     }
 
     /**
@@ -50,16 +45,6 @@ class SearchManager implements SearchManagerInterface
         if ($query_string == '') {
             $query_string = '*';
         }
-
-        // Search all indexes.
-        $search = new Search($this->client);
-        foreach($this->index_manager->getAllIndexes() as $index) {
-            $search->addIndex($index);
-        }
-        $search->setQuery($query_string);
-        d($search);
-        d($search->search());
-        d($this->index_manager);
 
         // Collect the fields that should be searchable.
         $fields_event = new FieldCollectionEvent();
