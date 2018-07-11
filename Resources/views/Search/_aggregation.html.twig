@@ -1,0 +1,14 @@
+<div class="card">
+  <div class="card-header">
+    {{ name }}
+  </div>
+  <div class="list-group list-group-flush">
+    {% for bucket in aggregation.buckets %}
+      <a href="{{ '#' }}" class="list-group-item">
+        <span class="badge badge-secondary">{{ bucket.doc_count }}</span>
+        {{ bucket.key }}
+      </a>
+    {% endfor %}
+  </div>
+</div>
+{{dump(aggregation)}}

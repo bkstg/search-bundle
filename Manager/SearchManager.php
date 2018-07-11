@@ -5,6 +5,7 @@ namespace Bkstg\SearchBundle\Manager;
 use Bkstg\SearchBundle\Event\FieldCollectionEvent;
 use Bkstg\SearchBundle\Event\FilterCollectionEvent;
 use Bkstg\SearchBundle\Event\QueryAlterEvent;
+use Elastica\Query;
 use Elastica\QueryBuilder;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -32,7 +33,7 @@ class SearchManager implements SearchManagerInterface
      * - Returns only non-productions that are in groups with the current user.
      * - Returns only entities that have a status of 1.
      */
-    public function buildQuery(string $query_string)
+    public function buildQuery(string $query_string): Query
     {
         // Default query string is everything.
         if ($query_string == '') {
@@ -45,7 +46,7 @@ class SearchManager implements SearchManagerInterface
 
         // Create the elastica query builder and default query.
         $qb = new QueryBuilder();
-        $query = $qb->query()->bool()
+        $search_query = $qb->query()->bool()
             ->addMust(
                 $qb
                     ->query()
@@ -70,12 +71,16 @@ class SearchManager implements SearchManagerInterface
 
         // Build the filter query.
         $filter_query = $qb->query()->bool();
-        $query->addFilter($filter_query);
+        $search_query->addFilter($filter_query);
 
         // Add filters from the filter event.
         foreach($filter_event->getFilters() as $filter) {
             $filter_query->addShould($filter);
         }
+
+        // Create the final returnable query.
+        $query = new Query();
+        $query->setQuery($search_query);
 
         // Allow altering of the finished query.
         $query_event = new QueryAlterEvent($query);

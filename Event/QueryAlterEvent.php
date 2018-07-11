@@ -2,7 +2,7 @@
 
 namespace Bkstg\SearchBundle\Event;
 
-use Elastica\Query\AbstractQuery;
+use Elastica\Query;
 use Symfony\Component\EventDispatcher\Event;
 
 class QueryAlterEvent extends Event
@@ -11,7 +11,7 @@ class QueryAlterEvent extends Event
 
     private $query;
 
-    public function __construct(AbstractQuery $query)
+    public function __construct(Query $query)
     {
         $this->query = $query;
     }

@@ -21,7 +21,7 @@ class SearchResultExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            new \Twig_Function('bkstg_search_result', [$this, 'renderSearchResult'], ['is_safe' => ['html']]),
+            new \Twig_Function('bkstg_search_result_render', [$this, 'renderSearchResult'], ['is_safe' => ['html']]),
         ];
     }
 

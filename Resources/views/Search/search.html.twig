@@ -1,15 +1,28 @@
 {% extends '@BkstgCore/layout.html.twig' %}
 {% trans_default_domain 'BkstgSearchBundle' %}
 {% set page_title = 'search'|trans %}
-{% block content %}
-  <ul class="list-group">
-  {% for result in results %}
-    <li class="list-group-item list-group-item-action">
-      {{ bkstg_search_result(result) }}
-    </li>
-  {% else %}
-    <p><em>{{ 'Your search did not return any results.'|trans }}</em></p>
-  {% endfor %}
-  </ul>
-  {{ knp_pagination_render(results) }}
+
+{% block main %}
+  <div class="container-fluid">
+    {% include '@BkstgCore/_header.html.twig' with { 'title': page_title } only %}
+    {% include '@BkstgCore/_alerts.html.twig' %}
+    <div class="row">
+      <div class="col-md-9">
+        <div class="list-group">
+        {% for result in results %}
+          {{ bkstg_search_result_render(result) }}
+        {% else %}
+          <p><em>{{ 'Your search did not return any results.'|trans }}</em></p>
+        {% endfor %}
+        </div>
+        {{ knp_pagination_render(results) }}
+      </div>
+      <div class="col-md-3">
+        {% for name, aggregation in aggregations %}
+          {% include '@BkstgSearch/Search/_aggregation.html.twig' with {'name': name, 'aggregation': aggregation} only %}
+        {% endfor %}
+      </div>
+    </div>
+    {% include '@BkstgCore/_footer.html.twig' %}
+  </div>
 {% endblock %}

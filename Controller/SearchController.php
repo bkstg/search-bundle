@@ -17,16 +17,19 @@ class SearchController extends Controller
         PaginatorInterface $paginator,
         Request $request
     ) {
-        // Create a search query and paginate.
+        // Create a search query and get results and aggregrations.
         $query = $search->buildQuery($request->query->get('search'));
         $results = $finder->createPaginatorAdapter($query);
+        $aggregations = $results->getAggregations();
+
+        // Paginate the results.
         $results = $paginator->paginate($results, $request->query->getInt('page', 1));
 
         // Return the response.
         return new Response(
             $this->templating->render(
                 '@BkstgSearch/Search/search.html.twig',
-                ['results' => $results]
+                ['results' => $results, 'aggregations' => $aggregations]
             )
         );
     }
