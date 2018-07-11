@@ -58,11 +58,11 @@ class SearchResultExtension extends \Twig_Extension
             $namespace = '@' . (str_replace('Bundle', '', implode('', $parts)));
 
             // Create a guessed template.
-            $templates[] = $namespace . DIRECTORY_SEPARATOR . $folder . 'search-result.html.twig';
+            $templates[] = $namespace . DIRECTORY_SEPARATOR . $folder . '_search_result.html.twig';
         }
 
         // Absolute rock-bottom fallback.
-        $templates[] = '@BkstgSearch/Search/search-result.html.twig';
+        $templates[] = '@BkstgSearch/Search/_search_result.html.twig';
 
         return $templates;
     }

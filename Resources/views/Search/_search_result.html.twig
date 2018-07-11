@@ -1,5 +1,5 @@
 {% if attribute(result, '__toString') is defined %}
-  <p>{{ result|raw }}</p>
+  <p>{{ result|purify }}</p>
 {% else %}
   {% if result.title is defined %}
     <h3>{{ result.title }}</h3>

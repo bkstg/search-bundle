@@ -1,9 +1,10 @@
 {% extends '@BkstgCore/layout.html.twig' %}
-{% set page_title = 'Search' %}
+{% trans_default_domain 'BkstgSearchBundle' %}
+{% set page_title = 'search'|trans %}
 {% block content %}
-  <ul class="search-results">
+  <ul class="list-group">
   {% for result in results %}
-    <li class="search-result">
+    <li class="list-group-item list-group-item-action">
       {{ bkstg_search_result(result) }}
     </li>
   {% else %}
