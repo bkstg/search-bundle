@@ -1,14 +1,18 @@
-<div class="card">
-  <div class="card-header">
-    {{ name }}
+{% if aggregation.links|length > 1 or aggregation.active %}
+  <div class="card mb-3">
+    <div class="card-header">
+      {{ aggregation.label }}
+    </div>
+    <div class="list-group list-group-flush">
+      {% for link in aggregation.links %}
+        <a href="{{ bkstg_search_aggregation_url(link) }}" class="list-group-item list-group-item-action{% if link.active %} active{% endif %}">
+          <span class="badge badge-{% if link.active %}secondary{% else %}primary{% endif %}">{{ link.count }}</span>
+          {{ link.label }}
+          {% if link.active %}
+            <span class="float-right fa fa-close mt-1"></span>
+          {% endif %}
+        </a>
+      {% endfor %}
+    </div>
   </div>
-  <div class="list-group list-group-flush">
-    {% for bucket in aggregation.buckets %}
-      <a href="{{ '#' }}" class="list-group-item">
-        <span class="badge badge-secondary">{{ bucket.doc_count }}</span>
-        {{ bucket.key }}
-      </a>
-    {% endfor %}
-  </div>
-</div>
-{{dump(aggregation)}}
+{% endif %}

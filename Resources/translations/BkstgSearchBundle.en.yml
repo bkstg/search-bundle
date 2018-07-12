@@ -1,0 +1,12 @@
+search: 'Search'
+aggregation:
+    label:
+        production: 'Production'
+        type: 'Type'
+    type:
+        post: 'Post'
+        resource: 'Resource'
+        event: 'Event'
+        schedule: 'Schedule'
+        user: 'User'
+        production: 'Production'

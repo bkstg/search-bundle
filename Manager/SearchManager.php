@@ -2,25 +2,41 @@
 
 namespace Bkstg\SearchBundle\Manager;
 
+use Bkstg\SearchBundle\Aggregation\AggregationManagerInterface;
+use Bkstg\SearchBundle\Event\AggregationCollectionEvent;
 use Bkstg\SearchBundle\Event\FieldCollectionEvent;
 use Bkstg\SearchBundle\Event\FilterCollectionEvent;
 use Bkstg\SearchBundle\Event\QueryAlterEvent;
 use Elastica\Query;
 use Elastica\QueryBuilder;
+use FOS\ElasticaBundle\Finder\FinderInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class SearchManager implements SearchManagerInterface
 {
+    private $results;
+    private $aggregations;
+
     private $dispatcher;
     private $token_storage;
+    private $finder;
+    private $aggregation_manager;
+    private $request_stack;
 
     public function __construct(
         EventDispatcherInterface $dispatcher,
-        TokenStorageInterface $token_storage
+        TokenStorageInterface $token_storage,
+        FinderInterface $finder,
+        AggregationManagerInterface $aggregation_manager,
+        RequestStack $request_stack
     ) {
         $this->dispatcher = $dispatcher;
         $this->token_storage = $token_storage;
+        $this->finder = $finder;
+        $this->aggregation_manager = $aggregation_manager;
+        $this->request_stack = $request_stack;
     }
 
     /**
@@ -35,6 +51,9 @@ class SearchManager implements SearchManagerInterface
      */
     public function buildQuery(string $query_string): Query
     {
+        // Get the current request.
+        $request = $this->request_stack->getCurrentRequest();
+
         // Default query string is everything.
         if ($query_string == '') {
             $query_string = '*';
@@ -78,9 +97,17 @@ class SearchManager implements SearchManagerInterface
             $filter_query->addShould($filter);
         }
 
-        // Create the final returnable query.
+        // Create the query.
         $query = new Query();
         $query->setQuery($search_query);
+
+        // Get aggregations to add to query.
+        foreach($this->aggregation_manager->getProcessors() as $processor) {
+            $query->addAggregation($processor->getAggregation());
+        }
+
+        // Add aggregation filters to query.
+        $search_query->addMust($this->aggregation_manager->getQuery());
 
         // Allow altering of the finished query.
         $query_event = new QueryAlterEvent($query);
@@ -88,9 +115,22 @@ class SearchManager implements SearchManagerInterface
         return $query;
     }
 
-    public function execute(string $query)
+    public function execute(Query $query)
     {
-        $query = $this->buildQuery($query);
-        return $query->execute();
+        $this->results = $this->finder->createPaginatorAdapter($query);
+        $this->aggregations = $this->aggregation_manager->buildLinks(
+            $this->results->getAggregations()
+        );
+        return $this->results;
+    }
+
+    public function getAggregations()
+    {
+        return $this->aggregations;
+    }
+
+    public function getResults()
+    {
+        return $this->results;
     }
 }

@@ -18,8 +18,8 @@
         {{ knp_pagination_render(results) }}
       </div>
       <div class="col-md-3">
-        {% for name, aggregation in aggregations %}
-          {% include '@BkstgSearch/Search/_aggregation.html.twig' with {'name': name, 'aggregation': aggregation} only %}
+        {% for aggregation in aggregations %}
+          {% include '@BkstgSearch/Search/_aggregation.html.twig' with { 'aggregation': aggregation } only %}
         {% endfor %}
       </div>
     </div>
