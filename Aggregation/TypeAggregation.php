@@ -1,12 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * This file is part of the BkstgCoreBundle package.
+ * (c) Luke Bainbridge <http://www.lukebainbridge.ca/>
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Bkstg\SearchBundle\Aggregation;
 
 use Bkstg\SearchBundle\BkstgSearchBundle;
 use Elastica\Aggregation\AbstractAggregation;
-use Elastica\QueryBuilder;
 use Elastica\Query\AbstractQuery;
-use Elastica\Query\BoolQuery;
+use Elastica\QueryBuilder;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class TypeAggregation implements AggregationProcessorInterface
@@ -29,6 +37,7 @@ class TypeAggregation implements AggregationProcessorInterface
     public function getAggregation(): AbstractAggregation
     {
         $qb = new QueryBuilder();
+
         return $qb
             ->aggregation()
             ->terms($this->getName())
@@ -39,6 +48,7 @@ class TypeAggregation implements AggregationProcessorInterface
     public function getQuery($value): AbstractQuery
     {
         $qb = new QueryBuilder();
+
         return $qb->query()->terms('_type', $value);
     }
 
@@ -47,7 +57,7 @@ class TypeAggregation implements AggregationProcessorInterface
         return $this->translator->trans('aggregation.label.type', [], BkstgSearchBundle::TRANSLATION_DOMAIN);
     }
 
-    public function buildLinks($aggregation, $value)
+    public function buildLinks($aggregation, $value): void
     {
         foreach ($aggregation['buckets'] as $bucket) {
             // Reset the query on each bucket to build queries.
@@ -83,7 +93,7 @@ class TypeAggregation implements AggregationProcessorInterface
 
     public function isActive(): bool
     {
-        return $this->active === true;
+        return true === $this->active;
     }
 
     public function getLinks(): array

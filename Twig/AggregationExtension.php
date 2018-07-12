@@ -1,5 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * This file is part of the BkstgCoreBundle package.
+ * (c) Luke Bainbridge <http://www.lukebainbridge.ca/>
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Bkstg\SearchBundle\Twig;
 
 use Bkstg\SearchBundle\Aggregation\AggregationLinkInterface;
@@ -10,7 +19,6 @@ class AggregationExtension extends \Twig_Extension
 {
     private $request_stack;
     private $url_generator;
-
 
     public function __construct(
         RequestStack $request_stack,
@@ -35,6 +43,7 @@ class AggregationExtension extends \Twig_Extension
             $request->query->all(),
             [urlencode($link->getProcessor()->getName()) => $link->getQuery()]
         );
+
         return $this->url_generator->generate($request->attributes->get('_route'), $parameters);
     }
 }

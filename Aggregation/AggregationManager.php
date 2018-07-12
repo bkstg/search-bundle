@@ -1,10 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * This file is part of the BkstgCoreBundle package.
+ * (c) Luke Bainbridge <http://www.lukebainbridge.ca/>
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Bkstg\SearchBundle\Aggregation;
 
 use Elastica\Query\AbstractQuery;
 use Elastica\Query\BoolQuery;
-use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class AggregationManager implements AggregationManagerInterface
@@ -18,7 +26,7 @@ class AggregationManager implements AggregationManagerInterface
         $this->request_stack = $request_stack;
     }
 
-    public function addProcessor(AggregationProcessorInterface $processor)
+    public function addProcessor(AggregationProcessorInterface $processor): void
     {
         $this->processors[$processor->getName()] = $processor;
     }
@@ -63,13 +71,14 @@ class AggregationManager implements AggregationManagerInterface
     public function buildLinks(array $aggregations): array
     {
         $request = $this->request_stack->getCurrentRequest();
-        foreach($this->processors as $processor) {
+        foreach ($this->processors as $processor) {
             $key = urlencode($processor->getName());
             $processor->buildLinks(
                 $aggregations[$processor->getName()] ?: null,
                 $request->query->get($key, null)
             );
         }
+
         return $this->processors;
     }
 }

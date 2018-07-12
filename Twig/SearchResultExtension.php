@@ -1,5 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * This file is part of the BkstgCoreBundle package.
+ * (c) Luke Bainbridge <http://www.lukebainbridge.ca/>
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Bkstg\SearchBundle\Twig;
 
 use Doctrine\ORM\EntityManagerInterface;
@@ -49,7 +58,7 @@ class SearchResultExtension extends \Twig_Extension
 
             // Traverse into parts until Entity is reached.
             $folder = '';
-            while (end($parts) != 'Entity') {
+            while ('Entity' != end($parts)) {
                 $folder = array_pop($parts) . DIRECTORY_SEPARATOR . $folder;
             }
 

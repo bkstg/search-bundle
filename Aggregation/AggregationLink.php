@@ -1,5 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * This file is part of the BkstgCoreBundle package.
+ * (c) Luke Bainbridge <http://www.lukebainbridge.ca/>
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Bkstg\SearchBundle\Aggregation;
 
 class AggregationLink implements AggregationLinkInterface
@@ -23,6 +32,7 @@ class AggregationLink implements AggregationLinkInterface
     public function setActive(bool $active)
     {
         $this->active = $active;
+
         return $this;
     }
 
@@ -34,6 +44,7 @@ class AggregationLink implements AggregationLinkInterface
     public function setQuery(array $query)
     {
         $this->query = $query;
+
         return $this;
     }
 
@@ -45,6 +56,7 @@ class AggregationLink implements AggregationLinkInterface
     public function setLabel(string $label)
     {
         $this->label = $label;
+
         return $this;
     }
 
@@ -56,6 +68,7 @@ class AggregationLink implements AggregationLinkInterface
     public function setCount(int $count)
     {
         $this->count = $count;
+
         return $this;
     }
 
@@ -63,5 +76,4 @@ class AggregationLink implements AggregationLinkInterface
     {
         return $this->count;
     }
-
 }

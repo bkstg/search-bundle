@@ -1,9 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * This file is part of the BkstgCoreBundle package.
+ * (c) Luke Bainbridge <http://www.lukebainbridge.ca/>
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Bkstg\SearchBundle\Manager;
 
 use Bkstg\SearchBundle\Aggregation\AggregationManagerInterface;
-use Bkstg\SearchBundle\Event\AggregationCollectionEvent;
 use Bkstg\SearchBundle\Event\FieldCollectionEvent;
 use Bkstg\SearchBundle\Event\FilterCollectionEvent;
 use Bkstg\SearchBundle\Event\QueryAlterEvent;
@@ -55,7 +63,7 @@ class SearchManager implements SearchManagerInterface
         $request = $this->request_stack->getCurrentRequest();
 
         // Default query string is everything.
-        if ($query_string == '') {
+        if ('' == $query_string) {
             $query_string = '*';
         }
 
@@ -93,7 +101,7 @@ class SearchManager implements SearchManagerInterface
         $search_query->addFilter($filter_query);
 
         // Add filters from the filter event.
-        foreach($filter_event->getFilters() as $filter) {
+        foreach ($filter_event->getFilters() as $filter) {
             $filter_query->addShould($filter);
         }
 
@@ -102,7 +110,7 @@ class SearchManager implements SearchManagerInterface
         $query->setQuery($search_query);
 
         // Get aggregations to add to query.
-        foreach($this->aggregation_manager->getProcessors() as $processor) {
+        foreach ($this->aggregation_manager->getProcessors() as $processor) {
             $query->addAggregation($processor->getAggregation());
         }
 
@@ -112,6 +120,7 @@ class SearchManager implements SearchManagerInterface
         // Allow altering of the finished query.
         $query_event = new QueryAlterEvent($query);
         $this->dispatcher->dispatch(QueryAlterEvent::NAME, $query_event);
+
         return $query;
     }
 
@@ -121,6 +130,7 @@ class SearchManager implements SearchManagerInterface
         $this->aggregations = $this->aggregation_manager->buildLinks(
             $this->results->getAggregations()
         );
+
         return $this->results;
     }
 

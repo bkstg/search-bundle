@@ -1,14 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * This file is part of the BkstgCoreBundle package.
+ * (c) Luke Bainbridge <http://www.lukebainbridge.ca/>
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Bkstg\SearchBundle\Aggregation;
 
 use Bkstg\CoreBundle\Entity\Production;
 use Bkstg\SearchBundle\BkstgSearchBundle;
 use Doctrine\ORM\EntityManagerInterface;
 use Elastica\Aggregation\AbstractAggregation;
-use Elastica\QueryBuilder;
 use Elastica\Query\AbstractQuery;
-use Elastica\Query\BoolQuery;
+use Elastica\QueryBuilder;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class ProductionAggregation implements AggregationProcessorInterface
@@ -35,6 +43,7 @@ class ProductionAggregation implements AggregationProcessorInterface
     public function getAggregation(): AbstractAggregation
     {
         $qb = new QueryBuilder();
+
         return $qb
             ->aggregation()
             ->terms($this->getName())
@@ -45,6 +54,7 @@ class ProductionAggregation implements AggregationProcessorInterface
     public function getQuery($value): AbstractQuery
     {
         $qb = new QueryBuilder();
+
         return $qb->query()->terms('groups.id', $value);
     }
 
@@ -53,7 +63,7 @@ class ProductionAggregation implements AggregationProcessorInterface
         return $this->translator->trans('aggregation.label.production', [], BkstgSearchBundle::TRANSLATION_DOMAIN);
     }
 
-    public function buildLinks($aggregation, $value)
+    public function buildLinks($aggregation, $value): void
     {
         $repo = $this->em->getRepository(Production::class);
         foreach ($aggregation['buckets'] as $bucket) {
@@ -90,7 +100,7 @@ class ProductionAggregation implements AggregationProcessorInterface
 
     public function isActive(): bool
     {
-        return $this->active === true;
+        return true === $this->active;
     }
 
     public function getLinks(): array
