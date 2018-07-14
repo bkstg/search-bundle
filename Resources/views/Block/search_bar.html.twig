@@ -1,4 +1,5 @@
+{% trans_default_domain 'BkstgSearchBundle' %}
 <form class="form-inline my-2 my-lg-0" action="{{ url('bkstg_search_search') }}" method="GET">
-  <input type="search" class="form-control mr-sm-2" name="search" placeholder="{{ 'Search'|trans }}" aria-label="{{ 'Search'|trans }}" value="{{ app.request.query.get('search') }}">
-  <button class="btn btn-outline-success my-2 my-sm-0" type="submit">{{'Search'|trans}}</button>
+  <input type="search" class="form-control mr-sm-2" name="search" placeholder="{{ 'search'|trans }}" aria-label="{{ 'search'|trans }}" value="{{ app.request.query.get('search') }}">
+  <button class="btn btn-outline-success my-2 my-sm-0" type="submit">{{'search'|trans}}</button>
 </form>

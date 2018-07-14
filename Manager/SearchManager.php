@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the BkstgCoreBundle package.
+ * This file is part of the BkstgSearchBundle package.
  * (c) Luke Bainbridge <http://www.lukebainbridge.ca/>
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -56,6 +56,8 @@ class SearchManager implements SearchManagerInterface
      * - Returns only productions the current user is a member of.
      * - Returns only non-productions that are in groups with the current user.
      * - Returns only entities that have a status of 1.
+     *
+     * @param string $query_string
      */
     public function buildQuery(string $query_string): Query
     {
